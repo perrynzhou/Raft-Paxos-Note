@@ -1,0 +1,35 @@
+name: Build and test
+
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: run tests
+      run: |
+        sudo apt-get install -y gdb
+        ulimit -c unlimited -S
+        make -f Makefile.lx testr
+        COREFILE=$(find . -maxdepth 3 -name "core*" | head -n 1)
+        if [[ -f "$COREFILE" ]]; then gdb -c "$COREFILE" tests/debug/testr -ex "thread apply all bt" -ex "set pagination 0" -batch; fi
+        
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: test builds and logs
+        path: |
+          tests
+          !tests/**/*.o
+          !tests/src/**
+          !tests/sources
+          !tests/Makefile.*
