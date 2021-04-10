@@ -1,0 +1,24 @@
+sudo: required
+dist: trusty
+
+language: cpp
+
+compiler: g++
+
+git:
+    submodules: true
+
+install: 
+    - ${TRAVIS_BUILD_DIR}/paxoskv/dependency_tools/install_dependencies.sh 
+
+script:
+# For certain.
+    - cd certain; sh build.sh libcertain.a; cd ..;
+# For paxoskv.
+    - cd paxoskv
+    - mkdir build
+    - cd build
+    - cmake .. && make
+
+notifications:
+    email: true

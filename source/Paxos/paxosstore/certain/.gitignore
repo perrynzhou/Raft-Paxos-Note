@@ -1,0 +1,5 @@
+*.pb.*
+/test_db.o/
+/test_log.o/
+/test_plog.o/
+/third/
